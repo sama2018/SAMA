@@ -12,7 +12,7 @@ def createDict(sentence) :
     user = sentence.split(" ")[0]
     word = sentence.split(" ")[1]
     message= "Added:\nuser: " + user + "\n" + "word: " + word
-
+    #test
     return message
 
 serverPort = 10000
