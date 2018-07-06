@@ -16,6 +16,8 @@ class UI:
 
     def __init__(self, client):
 
+
+
         self.clientSocket = None
 
         self.client = client
@@ -46,11 +48,9 @@ class UI:
         self.chatWindow = Text(self.chat)
 
 
-        self.drawLobby()
-        self.drawCanvas()
-        self.drawChat()
 
     def setClientSocket(self, clientSocket):
+
         self.clientSocket = clientSocket
 
     def drawLobby(self):
@@ -73,11 +73,13 @@ class UI:
         rc2.grid(row=0, column=1, sticky="w")
 
     def mayClick(self):
+
         self.client.chatSend()
 
 
 
     def drawChat(self):
+
 
         self.chat.grid(row=0, column=2, sticky="nsew")
         self.chat.grid_columnconfigure(0, weight=1)
@@ -95,7 +97,7 @@ class UI:
 
     def callback(self):
         #self.label(text="Please provide us a username")
-        ChatDialog = ConnectionDialog.ConnectionDialog(self.root)
+        ChatDialog = ConnectionDialog.ConnectionDialog(self.root, self.clientSocket)
         ChatDialog.body()
 
 

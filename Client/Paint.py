@@ -1,7 +1,7 @@
 from Client.src import Client
 
 def main():
-    # Create
+    # Create client object
     client = Client.Client()
 
 

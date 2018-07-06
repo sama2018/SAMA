@@ -9,8 +9,10 @@ from Client.src import ClientConnection
 
 class ConnectionDialog:
 
-    def __init__(self, parent):
+    def __init__(self, parent, socket):
+
         self.top = Toplevel(parent)
+        self.clientSocket = socket
 
 
         global username_holder
@@ -63,12 +65,21 @@ class ConnectionDialog:
         isUsernameValid = self.user_validation(user)#cc.user_validation(user)
         isWordSelectedValid = self.word_validation(wordSelected) #cc.word_validation(wordSelected)
 
+
+
         if isUsernameValid == True and isWordSelectedValid == True:
 
             print("ok: " + user + ": "+ wordSelected)
 
             sentence = user + " " + wordSelected + "\n"
             #cc.connect(sentence)  # call connect
+            # if username and fig geo are OK:
+            # figGeo = fig.get()
+
+            self.clientSocket.sendall(self.build_json_reply("set_username", {"username": user, "figure":wordSelected}).encode("utf-8"))
+            modifiedSentence = self.clientSocket.recv(1024).decode("utf-8")
+
+            print("reply from server: " + modifiedSentence)
             user_Error = Label(self.top, text=" ", fg="white")
             user_Error.grid(row=6, column=1)
 

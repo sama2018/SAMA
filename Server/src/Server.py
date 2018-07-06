@@ -4,17 +4,18 @@ from _thread import *
 import sys
 
 #This function takes the data enters by the user and handles it to write into a file
-def createDict(sentence) :
-    f  =  open('users.txt', 'a')
+def createDict(user, word) :
+    f  =  open('users.txt', 'w+')
 
-    f.write(sentence )
+    f.write(user+word )
 
-    user = sentence.split(" ")[0]
-    word = sentence.split(" ")[1]
-    message= "Added:\nuser: " + user + "\n" + "word: " + word
+    #user = sentence.split(" ")[0]
+    #word = sentence.split(" ")[1]
+    #message= "Added:\nuser: " + user + "\n" + "word: " + word
     #test
-    return message
+    return user+word
 
+""" Create socket, bind it to localhost and start to listen for incomming connections"""
 serverPort = 10000
 serverSocket = socket(AF_INET, SOCK_STREAM)
 serverSocket.bind(("localhost", serverPort))
@@ -26,6 +27,10 @@ print('The server is ready to receive')
 
 def clientT(conn):
 
+    """ This method handles the new client by identifying which action to take based on the
+        data sent by the client.
+    """
+
     while True:
 
         data = conn.recv(1024).decode()
@@ -35,25 +40,21 @@ def clientT(conn):
         # Turn data into json object
         jdata = json.loads(data)
         if jdata["action"] == "set_username":
-
-            capitalizedSentence = jdata["payload"]["username"].upper()
-            clients[capitalizedSentence] = conn
-            conn.send(capitalizedSentence.encode())
+            user = jdata["payload"]["username"].upper()
+            word = jdata["payload"]["figure"]
+            print("Server msg: user: {0} and word {1}".format(user, word))
+            createDict(user, word)
+            clients[user] = conn
+            conn.send(user.encode())
 
         elif jdata["action"] == "chat_message":
-
-
-
-
-            # Do chat stuff here
             pass
-
-
 
 
     conn.close()
 
 
+""" Enter main loop to accept new clients"""
 while 1:
     connectionSocket, addr = serverSocket.accept()
     print("Connected with " + addr[0] + ":" + str(addr[1]))

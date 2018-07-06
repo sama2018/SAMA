@@ -13,7 +13,7 @@ class Client:
     def __init__(self):
 
         self.clientSocket = None
-
+        #object of the UI
         self.ui = UI.UI(self)
 
         self.ui.drawLobby()
@@ -35,6 +35,7 @@ class Client:
 
     def connect(self):
 
+
         serverName = "localhost"
         serverPort = 10000
 
@@ -43,9 +44,12 @@ class Client:
 
     @staticmethod
     def build_json_reply(action, payload):
+
         return json.dumps({"action":action,"payload":payload})
 
     def chatSend(self):
+
+
         text = self.ui.chatInput.get()
 
         self.clientSocket.sendall(self.build_json_reply("chat_message", {"message":text}).encode("utf-8"))
@@ -58,12 +62,13 @@ class Client:
 
 
     def validation(self, username): #add regex to this .Also may go to another file
-       userValid = False
+        """ This method validates the username """
+        userValid = False
 
-       if  re.match(r'(\w+\S+)', username, re.M ) :
-          userValid = True
+        if  re.match(r'(\w+\S+)', username, re.M ):
+              userValid = True
 
-       return userValid
+        return userValid
 
 
 
