@@ -6,3 +6,4 @@ LAU: square
 CHRIS : rectangle
 STELL: triangle
 LOLO: rectangle
+MAYRELIS: circle

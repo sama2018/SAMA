@@ -42,6 +42,20 @@ class Client:
         self.clientSocket = socket(AF_INET, SOCK_STREAM)
         self.clientSocket.connect((serverName, serverPort))
 
+        # # Create thread
+        # t = Thread(target=self.handle_server_input)
+        # t.start()
+
+    def handle_server_input(self):
+        # data = self.clientSocket.recv(2048).decode("utf-8")
+        # jdata = json.loads(data)
+        # if jdata == chat_message
+        #
+        #
+        # if chatSend:
+        #     self.ui.chatInput.insert(new message)
+        pass
+
     @staticmethod
     def build_json_reply(action, payload):
 

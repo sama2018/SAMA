@@ -23,7 +23,7 @@ class ConnectionDialog:
 
         welcomeMessage = Label(self.top, text="Please provide a USERNAME and select a FIGURE to be drawn.\n"
                                               "You can  enter also the figure by number \n\n"
-                                              " 1-CIRCLE  2-TRIAGLE  3-RECTANGLE  4-SQUARE \n ")
+                                              " 1-CIRCLE  2-TRIANGLE  3-RECTANGLE  4-SQUARE \n ")
 
         # entry for username with placeholder
 
@@ -120,13 +120,13 @@ class ConnectionDialog:
     def word_validation(self, word_selected):
         wordValid = False
 
-        if re.match(r'circle', word_selected, re.M) or word_selected == '1':
+        if re.match(r'CIRCLE', word_selected, re.M) or word_selected == '1':
             wordValid = True
-        if re.match(r'triangle', word_selected, re.M) or word_selected == '2':
+        if re.match(r'TRIANGLE', word_selected, re.M) or word_selected == '2':
             wordValid = True
-        if re.match(r'rectangle', word_selected, re.M) or word_selected == '3':
+        if re.match(r'RECTANGLE', word_selected, re.M) or word_selected == '3':
             wordValid = True
-        if re.match(r'square', word_selected, re.M) or word_selected == '4':
+        if re.match(r'SQUARE', word_selected, re.M) or word_selected == '4':
             wordValid = True
 
         return wordValid
