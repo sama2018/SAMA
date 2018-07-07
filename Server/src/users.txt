@@ -1,1 +1,6 @@
-MAYREcircle
+
+SAMI: circle
+MAY: circle
+MADE: triangle
+LAU: square
+CHRIS : rectangle

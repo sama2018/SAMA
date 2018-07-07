@@ -4,15 +4,12 @@ from _thread import *
 import sys
 
 #This function takes the data enters by the user and handles it to write into a file
-def createDict(user, word) :
-    f  =  open('users.txt', 'w+')
+def saveUsers(user, word) :
+    f  =  open('users.txt', 'a+')
 
-    f.write(user+word )
+    f.write(user+ ": " + word )
 
-    #user = sentence.split(" ")[0]
-    #word = sentence.split(" ")[1]
-    #message= "Added:\nuser: " + user + "\n" + "word: " + word
-    #test
+
     return user+word
 
 """ Create socket, bind it to localhost and start to listen for incomming connections"""
@@ -43,7 +40,7 @@ def clientT(conn):
             user = jdata["payload"]["username"].upper()
             word = jdata["payload"]["figure"]
             print("Server msg: user: {0} and word {1}".format(user, word))
-            createDict(user, word)
+            saveUsers(user, word)
             clients[user] = conn
             conn.send(user.encode())
 

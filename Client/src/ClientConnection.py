@@ -27,24 +27,3 @@ class ClientConnection:
 
 
 
-    def user_validation(self, username):  # add regex to this .Also may go to another file
-        userValid = False
-
-        if re.match(r'(\w+\S+)', username, re.M):
-            userValid = True
-
-        return userValid
-
-    def word_validation(self, word_selected):
-        wordValid = False
-
-        if re.match(r'circle', word_selected, re.M) or word_selected == '1':
-            wordValid = True
-        if re.match(r'triagle', word_selected, re.M) or word_selected == '2':
-            wordValid = True
-        if re.match(r'rectangle', word_selected, re.M) or word_selected == '3':
-            wordValid = True
-        if re.match(r'square', word_selected, re.M) or word_selected == '4':
-            wordValid = True
-
-        return wordValid

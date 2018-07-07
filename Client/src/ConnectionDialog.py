@@ -27,15 +27,12 @@ class ConnectionDialog:
 
         # entry for username with placeholder
 
-        # user_Placeholder = "username"
+
         entry_username = Entry(self.top, textvariable=username_holder)
-        # entry_username.insert(0, user_Placeholder)
 
-        # entry with word selected and placeholder
 
-        # word_Placeholder = "geometric figure"
         entry_GeoFig = Entry(self.top, textvariable=word_holder)
-        # entry_GeoFig.insert(0, word_Placeholder)
+
 
         connect_Button = Button(self.top, text="Send", command=self.dataHandler)
 
@@ -54,13 +51,13 @@ class ConnectionDialog:
         pass
         # Label(self.top, text="Please provide us a username:").grid(row=0, column=0, sticky="w")
 
-        # this function handles the data entred by users
+        # this function handles the data entered by users
 
     def dataHandler(self):
 
         user = username_holder.get()
         wordSelected = word_holder.get()
-        #cc = ClientConnection.ClientConnection()
+
 
         isUsernameValid = self.user_validation(user)#cc.user_validation(user)
         isWordSelectedValid = self.word_validation(wordSelected) #cc.word_validation(wordSelected)
@@ -71,17 +68,14 @@ class ConnectionDialog:
 
             print("ok: " + user + ": "+ wordSelected)
 
-            sentence = user + " " + wordSelected + "\n"
-            #cc.connect(sentence)  # call connect
-            # if username and fig geo are OK:
-            # figGeo = fig.get()
+            wordSelected = wordSelected + "\n"
+
 
             self.clientSocket.sendall(self.build_json_reply("set_username", {"username": user, "figure":wordSelected}).encode("utf-8"))
             modifiedSentence = self.clientSocket.recv(1024).decode("utf-8")
 
             print("reply from server: " + modifiedSentence)
-            user_Error = Label(self.top, text=" ", fg="white")
-            user_Error.grid(row=6, column=1)
+            #try to make dessapear this pop up window when user is authenticated
 
         else:
             # show errors
@@ -127,7 +121,7 @@ class ConnectionDialog:
 
         if re.match(r'circle', word_selected, re.M) or word_selected == '1':
             wordValid = True
-        if re.match(r'triagle', word_selected, re.M) or word_selected == '2':
+        if re.match(r'triangle', word_selected, re.M) or word_selected == '2':
             wordValid = True
         if re.match(r'rectangle', word_selected, re.M) or word_selected == '3':
             wordValid = True
@@ -138,9 +132,7 @@ class ConnectionDialog:
 
 
 
-        #ClientConnection.connect(sentence)
-        #show errors mesagges
-        #NOT ALLOWED connection from this client
+
 
 
 
