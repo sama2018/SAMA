@@ -4,3 +4,5 @@ MAY: circle
 MADE: triangle
 LAU: square
 CHRIS : rectangle
+STELL: triangle
+LOLO: rectangle

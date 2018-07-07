@@ -76,6 +76,7 @@ class ConnectionDialog:
 
             print("reply from server: " + modifiedSentence)
             #try to make dessapear this pop up window when user is authenticated
+            self.top.withdraw()
 
         else:
             # show errors
