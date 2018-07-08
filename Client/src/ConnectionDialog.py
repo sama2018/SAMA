@@ -122,7 +122,12 @@ class ConnectionDialog:
     def word_validation(self, word_selected):
         wordValid = False
 
-        if re.match(r'circle', word_selected, re.M) or word_selected == '1':
+        # fix this
+        word_selected = word_selected.upper()
+
+        # change words to upper Case
+
+        if re.match(r'CIRCLE', word_selected, re.M) or word_selected == '1':
             wordValid = True
         if re.match(r'TRIANGLE', word_selected, re.M) or word_selected == '2':
             wordValid = True

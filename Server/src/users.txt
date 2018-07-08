@@ -39,3 +39,7 @@ SAMI: 3
 MAY: 1
 JELO: 1
 MAY: 1
+LOVF: circle
+SAMI: circle
+MAY: RECTANGLE
+WILL: SQUARE
