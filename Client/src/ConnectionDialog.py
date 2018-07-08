@@ -13,6 +13,7 @@ class ConnectionDialog:
 
         self.top = Toplevel(parent)
         self.clientSocket = socket
+        self.username = None
 
 
         global username_holder
@@ -56,6 +57,7 @@ class ConnectionDialog:
     def dataHandler(self):
 
         user = username_holder.get()
+        self.username = user
         wordSelected = word_holder.get()
 
 
@@ -120,7 +122,7 @@ class ConnectionDialog:
     def word_validation(self, word_selected):
         wordValid = False
 
-        if re.match(r'CIRCLE', word_selected, re.M) or word_selected == '1':
+        if re.match(r'circle', word_selected, re.M) or word_selected == '1':
             wordValid = True
         if re.match(r'TRIANGLE', word_selected, re.M) or word_selected == '2':
             wordValid = True

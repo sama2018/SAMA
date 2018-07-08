@@ -22,6 +22,10 @@ clients = {}
 print('The server is ready to receive')
 
 
+
+def build_json_reply(action, payload):
+    return json.dumps({"action": action, "payload": payload})
+
 def clientT(conn):
 
     """ This method handles the new client by identifying which action to take based on the
@@ -45,7 +49,16 @@ def clientT(conn):
             conn.send(user.encode())
 
         elif jdata["action"] == "chat_message":
-            pass
+            username = (jdata["payload"]["from"]).upper()
+            message = jdata["payload"]["message"]
+            print(username)
+            print(clients)
+
+            if username in clients:
+                print("found username")
+                for user in clients:
+                    clients[user].sendall(build_json_reply("broadcast_event", {"message":message, "from":username}).encode("utf-8"))
+
 
 
     conn.close()
