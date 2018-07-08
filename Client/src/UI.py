@@ -1,6 +1,8 @@
 from tkinter import *
 import sys
 from Client.src import ConnectionDialog
+import json
+
 
 class UI:
 
@@ -13,8 +15,15 @@ class UI:
     crfWidth = 200
     crfHeight = 420
 
+    style = "freeStyle"
+    pos = "down"
+
+    x_pos, y_pos = None, None
+
 
     def __init__(self, client):
+
+        #self.cd = ConnectionDialog.ConnectionDialog(self) #getting object from ConnectionDialog
 
         self.clientSocket = None
 
@@ -75,6 +84,52 @@ class UI:
         # Create user canvas
         me.grid(row=0, column=0, sticky="e")
 
+    #------------------------------------------ NEW CODE FROM HERE  -----------------------------------------------
+        me.bind("<B1-Motion>", self.draw_Action) #we can specify diffenrent events here
+
+
+
+    # see if we can implement interface features to allow users to select colors and width to draw
+    def draw_Action(self, event=None):
+
+        if self.style == "freeStyle":
+
+            if self.pos == "down":
+
+
+                if self.x_pos is not None and self.y_pos is not None:
+
+                    self.draw_figure_selected(event)
+
+
+                    # self.clientSocket.sendall(self.build_json_reply("drawing", {"pos_x": self.x_pos, "figure":self.y_pos}).encode("utf-8"))
+                    # modifiedSentence = self.clientSocket.recv(1024).decode("utf-8")
+                    # self.socket.recv(size).decode('utf8')
+                    # print(modifiedSentence)
+
+                self.x_pos = event.x
+                self.y_pos = event.y
+
+
+
+    """this function is going to create the figures
+       From here we can manage the different inputs and enable users to draw according to that"""
+
+    def draw_figure_selected(self, obj):
+
+            #if self.cd.getFigure() == 'triangle':
+            obj.widget.create_line(self.x_pos, self.y_pos, obj.x, obj.y, fill="blue", width=4, smooth=TRUE)
+            #else :
+            print ("didnt work")
+
+
+
+    #we need thisfuction again here to notify the server of the action to take 
+    @staticmethod
+    def build_json_reply(action, payload):
+        return json.dumps({"action": action, "payload": payload})
+
+    #------------------------------------------------ UNTIL HERE ---------------------------------------------------
 
 
     def mayClick(self):

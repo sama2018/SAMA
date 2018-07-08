@@ -43,3 +43,9 @@ LOVF: circle
 SAMI: circle
 MAY: RECTANGLE
 WILL: SQUARE
+RAMON: circle
+LUZ: circle
+ME: triangle
+LAU: circle
+LUNA : rectangle
+LUZ: circle

@@ -14,6 +14,7 @@ class ConnectionDialog:
         self.top = Toplevel(parent)
         self.clientSocket = socket
         self.username = None
+        self.word = None
 
 
         global username_holder
@@ -50,16 +51,16 @@ class ConnectionDialog:
 
     def body(self):
         pass
-        # Label(self.top, text="Please provide us a username:").grid(row=0, column=0, sticky="w")
 
-        # this function handles the data entered by users
+
+     # this function handles the data entered by users
 
     def dataHandler(self):
 
         user = username_holder.get()
         self.username = user
         wordSelected = word_holder.get()
-
+        self.word = wordSelected
 
         isUsernameValid = self.user_validation(user)#cc.user_validation(user)
         isWordSelectedValid = self.word_validation(wordSelected) #cc.word_validation(wordSelected)
@@ -92,7 +93,7 @@ class ConnectionDialog:
     def build_json_reply(action, payload):
         return json.dumps({"action": action, "payload": payload})
 
-    def mytest(self):
+    """def mytest(self):
         #if username and fig geo are OK:
         sentence = self.e.get()
         #figGeo = fig.get()
@@ -101,15 +102,19 @@ class ConnectionDialog:
         self.clientSocket.sendall(self.build_json_reply("set_username", {"username":sentence}).encode("utf-8"))
         modifiedSentence = self.clientSocket.recv(1024).decode("utf-8")
 
-        print("reply from server: "+ modifiedSentence)
+        print("reply from server: "+ modifiedSentence
 
 
 
         #self.ClientConnection.connect(sentence)
-        self.ok()
+        self.ok()"""
 
     def getUsername(self):
         return self.username
+
+    def getFigure(self):
+        return self.word
+
 
     def user_validation(self, username):  # add regex to this .Also may go to another file
         userValid = False

@@ -95,15 +95,6 @@ class Client:
 
 
 
-    def validation(self, username): #add regex to this .Also may go to another file
-        """ This method validates the username """
-        userValid = False
-
-        if  re.match(r'(\w+\S+)', username, re.M ):
-              userValid = True
-
-        return userValid
-
 
 
 
