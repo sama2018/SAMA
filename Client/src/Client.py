@@ -60,14 +60,21 @@ class Client:
             if self.clientSocket is None:
                 print("HERE")
                 break
-
+            # Receive data from server
             data = self.clientSocket.recv(2048).decode("utf-8")
+
+            # Convert it to json object
             jdata = json.loads(data)
             print(jdata)
 
+
             if jdata["action"] == "broadcast_event":
+
+                # Get payload data
                 frm = jdata["payload"]["from"]
                 msg = jdata["payload"]["message"]
+
+                # Insert the message into window chat
                 self.ui.chatWindow.insert("end", frm+"> "+msg+"\n")
 
 
@@ -84,9 +91,6 @@ class Client:
 
         self.clientSocket.sendall(self.build_json_reply("chat_message", {"from":self.ui.cDialog.getUsername(),"message":text}).encode("utf-8"))
 
-        #receiveing messages from server
-
-        #self.ui.chatWindow.insert("end","May>"+text+"\n")
 
 
 

@@ -7,7 +7,7 @@ class UI:
     wWidth = 1024
     wHeight = 720
 
-    lWidth = 200
+    lWidth = 100
     lHeight = 200
 
     crfWidth = 200
@@ -67,9 +67,15 @@ class UI:
         # Create canvas for user1,2 and 3
         rc1 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
         rc2 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
+        me = Canvas(self.canvasLocal, width=380, height=320, bd=1, relief=SUNKEN)
 
         rc1.grid(row=0, column=0, sticky="e")
         rc2.grid(row=0, column=1, sticky="w")
+
+        # Create user canvas
+        me.grid(row=0, column=0, sticky="e")
+
+
 
     def mayClick(self):
 
