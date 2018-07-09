@@ -59,7 +59,19 @@ def clientT(conn):
                 for user in clients:
                     clients[user].sendall(build_json_reply("broadcast_event", {"message":message, "from":username}).encode("utf-8"))
 
+        # code starts here to send the drawings
 
+        elif jdata["action"] == "drawing":
+            coordinate1 = jdata["payload"]["coordinate1"]
+            coordinate2 = jdata["payload"]["coordinate2"]
+            coor1 = str(coordinate1)
+            coor2 = str(coordinate2)
+            print("receive coords: " + "x: " + coor1 + " y:  " + coor2)
+
+
+            #for user in clients:
+            #clients[user].sendall( build_json_reply("broadcast_event", {"coordinate1": coordinate1, "coordinate2": coordinate2}).encode("utf-8"))
+                #print("receive coords")
 
     conn.close()
 

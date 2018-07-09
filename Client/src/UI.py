@@ -2,6 +2,7 @@ from tkinter import *
 import sys
 from Client.src import ConnectionDialog
 import json
+from socket import *
 
 
 class UI:
@@ -25,7 +26,9 @@ class UI:
 
         #self.cd = ConnectionDialog.ConnectionDialog(self) #getting object from ConnectionDialog
 
-        self.clientSocket = None
+        #self.clientSocket = None
+        self.clientSocket = socket(AF_INET, SOCK_STREAM)
+        self.clientSocket.connect(('localhost',10000))
 
         self.client = client
 
@@ -102,13 +105,11 @@ class UI:
                     self.draw_figure_selected(event)
 
 
-                    # self.clientSocket.sendall(self.build_json_reply("drawing", {"pos_x": self.x_pos, "figure":self.y_pos}).encode("utf-8"))
-                    # modifiedSentence = self.clientSocket.recv(1024).decode("utf-8")
-                    # self.socket.recv(size).decode('utf8')
-                    # print(modifiedSentence)
-
                 self.x_pos = event.x
                 self.y_pos = event.y
+
+                self.clientSocket.sendall(self.build_json_reply("drawing", {"coordinate1": self.x_pos, "coordinate2":self.y_pos}).encode("utf-8"))
+
 
 
 
@@ -120,11 +121,11 @@ class UI:
             #if self.cd.getFigure() == 'triangle':
             obj.widget.create_line(self.x_pos, self.y_pos, obj.x, obj.y, fill="blue", width=4, smooth=TRUE)
             #else :
-            print ("didnt work")
 
 
 
-    #we need thisfuction again here to notify the server of the action to take 
+
+    #we need thisfuction again here to notify the server of the action to take
     @staticmethod
     def build_json_reply(action, payload):
         return json.dumps({"action": action, "payload": payload})
