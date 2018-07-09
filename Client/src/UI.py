@@ -51,6 +51,9 @@ class UI:
 
         # Create canvases
         self.canvasRemote = Frame(self.root, width=UI.crfWidth, height=UI.crfHeight, bd=1, relief=SUNKEN)
+        self.rc1 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
+        self.rc2 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
+
         self.canvasLocal = Frame(self.root, width=200, height=320, bd=1, relief=SUNKEN)
 
         # Create Chat
@@ -77,18 +80,20 @@ class UI:
         self.canvasLocal.grid(row=0, column=1, sticky="ews")
 
         # Create canvas for user1,2 and 3
-        rc1 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
-        rc2 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
+        #rc1 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
+        #rc2 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
         me = Canvas(self.canvasLocal, width=380, height=320, bd=1, relief=SUNKEN)
 
-        rc1.grid(row=0, column=0, sticky="e")
-        rc2.grid(row=0, column=1, sticky="w")
+        self.rc1.grid(row=0, column=0, sticky="e")
+        self.rc2.grid(row=0, column=1, sticky="w")
+
 
         # Create user canvas
         me.grid(row=0, column=0, sticky="e")
 
     #------------------------------------------ NEW CODE FROM HERE  -----------------------------------------------
         me.bind("<B1-Motion>", self.draw_Action) #we can specify diffenrent events here
+       # self.rc1.bind("<B1-Motion>", self.draw_Action2)
 
 
 
@@ -122,6 +127,7 @@ class UI:
 
             #if self.cd.getFigure() == 'triangle':
             obj.widget.create_line(self.x_pos, self.y_pos, obj.x, obj.y, fill="blue", width=4, smooth=TRUE)
+
             #else :
 
 

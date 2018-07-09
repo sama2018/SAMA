@@ -1,4 +1,5 @@
 from threading import Thread
+from tkinter import *
 
 from Client.src import UI
 from tkinter import simpledialog
@@ -53,7 +54,7 @@ class Client:
         t = Thread(target=self.handle_server_input)
         t.start()
 
-    def handle_server_input(self):
+    def handle_server_input(self, event=None):
 
         while True:
             print("WE HERE")
@@ -82,9 +83,21 @@ class Client:
                 cordy1 = jdata["payload"]["coordinate1"]
                 cordy2 = jdata["payload"]["coordinate2"]
 
-                # This insert method ia not working with the drawing, FIXME !!!
-                self.ui.canvasRemote.insert(cordy1 )
 
+
+
+                # This insert method ia not working with the drawing, FIXME !!!
+                self.ui.rc1.bind("<B1-Motion>", self.draw_figure_selected(event, cordy1, cordy2))
+
+                #self.ui.rc1.create_line(cordy1, cordy2,  fill="blue", width=4, smooth=TRUE)
+                #self.draw_figure_selected(  cordy1, cordy2)
+
+    #FIXME !!!!
+    def draw_figure_selected(self, obj,  posX, posY):
+
+            #if self.cd.getFigure() == 'triangle':
+            obj.widget.create_line(posX, posY,  fill="blue", width=4, smooth=TRUE)
+            #else :
 
 
 

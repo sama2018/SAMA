@@ -1,5 +1,5 @@
 
-JULIO: square
-ANTONIODERE: circle
-LEFT: circle
-RIGHT: circle
+TRE: 2
+RE: 3
+DFGB: 3
+FDGGD: 1
