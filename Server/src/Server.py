@@ -69,8 +69,8 @@ def clientT(conn):
             print("receive coords: " + "x: " + coor1 + " y:  " + coor2)
 
 
-            #for user in clients:
-            #clients[user].sendall( build_json_reply("broadcast_event", {"coordinate1": coordinate1, "coordinate2": coordinate2}).encode("utf-8"))
+            for user in clients:
+                clients[user].sendall( build_json_reply("broadcast_event1", {"coordinate1": coordinate1, "coordinate2": coordinate2}).encode("utf-8"))
                 #print("receive coords")
 
     conn.close()

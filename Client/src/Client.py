@@ -77,6 +77,15 @@ class Client:
                 # Insert the message into window chat
                 self.ui.chatWindow.insert("end", frm+"> "+msg+"\n")
 
+            if jdata["action"] == "broadcast_event1":
+                # Get payload data
+                cordy1 = jdata["payload"]["coordinate1"]
+                cordy2 = jdata["payload"]["coordinate2"]
+
+                # This insert method ia not working with the drawing, FIXME !!!
+                self.ui.canvasRemote.insert(cordy1 )
+
+
 
 
     @staticmethod

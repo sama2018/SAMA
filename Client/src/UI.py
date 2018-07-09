@@ -109,6 +109,8 @@ class UI:
                 self.y_pos = event.y
 
                 self.clientSocket.sendall(self.build_json_reply("drawing", {"coordinate1": self.x_pos, "coordinate2":self.y_pos}).encode("utf-8"))
+                data = self.clientSocket.recv(2048).decode("utf-8")
+                print(data)
 
 
 
