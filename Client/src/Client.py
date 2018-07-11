@@ -108,6 +108,12 @@ class Client:
         posX = obj.x
         posY = obj.y
 
+    def send_drawing_coordinates(self, x, y, username, figure):
+
+        self.clientSocket.sendall(self.build_json_reply("drawing", {"username":username, "figure":figure,"coordinate1": x, "coordinate2": y}).encode("utf-8"))
+        data = self.clientSocket.recv(2048).decode("utf-8")
+        print(data)
+
 
 
     @staticmethod

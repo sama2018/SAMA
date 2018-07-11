@@ -19,6 +19,10 @@ serverSocket.bind(("localhost", serverPort))
 serverSocket.listen(10)
 
 clients = {}
+channel = {}
+
+
+
 print('The server is ready to receive')
 
 
@@ -46,6 +50,22 @@ def clientT(conn):
             print("Server msg: user: {0} and word {1}".format(user, word))
             saveUsers(user, word)
             clients[user] = conn
+
+            # Add user to channel (if possible)
+            fcount = 0
+            for user in channel:
+                if channel[user] == word and fcount is not 3:
+                    fcount += 1
+
+            if fcount is not 3:
+                channel[user] = word
+            #elif: send error message to user
+
+
+
+
+
+
             conn.send(user.encode())
 
         if jdata["action"] == "chat_message":

@@ -112,7 +112,7 @@ class UI:
 
 
             cl.cordy1 = event.x
-            cl.cordy2= event.y
+            cl.cordy2 = event.y
 
 
 
@@ -133,9 +133,8 @@ class UI:
                 self.x_pos = event.x
                 self.y_pos = event.y
 
-                self.clientSocket.sendall(self.build_json_reply("drawing", {"coordinate1": self.x_pos, "coordinate2":self.y_pos}).encode("utf-8"))
-                data = self.clientSocket.recv(2048).decode("utf-8")
-                print(data)
+                self.client.send_drawing_coordinates(self.x_pos, self.y_pos, self.cDialog.getUsername(), )
+
 
 
 
