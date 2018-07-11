@@ -1,6 +1,6 @@
 from tkinter import *
-import sys
 from Client.src import ConnectionDialog
+
 
 class UI:
 
@@ -13,12 +13,11 @@ class UI:
     crfWidth = 200
     crfHeight = 420
 
-
-    def __init__(self, client):
+    def __init__(self):
 
         self.clientSocket = None
 
-        self.client = client
+        self.client = None
 
         # Resolve root element
         self.root = Tk()
@@ -46,9 +45,6 @@ class UI:
         self.chatWindow = Text(self.chat)
 
 
-        self.drawLobby()
-        self.drawCanvas()
-        self.drawChat()
 
     def setClientSocket(self, clientSocket):
         self.clientSocket = clientSocket
@@ -71,10 +67,6 @@ class UI:
 
         rc1.grid(row=0, column=0, sticky="e")
         rc2.grid(row=0, column=1, sticky="w")
-
-    def mayClick(self):
-        self.client.chatSend()
-
 
 
     def drawChat(self):
@@ -110,6 +102,12 @@ class UI:
         self.mainSubMenu.add_command(label="Start", command=self.callback)
         self.mainSubMenu.add_command(label="Exit", command=self.exitOption)
         self.mainMenu.add_cascade(label="Network", menu=self.mainSubMenu)
+
+    def uiInit(self):
+        self.attachMainMenu()
+        self.drawCanvas()
+        self.drawLobby()
+        self.drawChat()
 
 
 
