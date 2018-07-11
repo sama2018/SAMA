@@ -3,6 +3,7 @@ import sys
 from Client.src import ConnectionDialog
 import json
 from socket import *
+from Client.src import Client
 
 
 class UI:
@@ -25,6 +26,8 @@ class UI:
     def __init__(self, client):
 
         #self.cd = ConnectionDialog.ConnectionDialog(self) #getting object from ConnectionDialog
+
+
 
         #self.clientSocket = None
         self.clientSocket = socket(AF_INET, SOCK_STREAM)
@@ -87,13 +90,30 @@ class UI:
         self.rc1.grid(row=0, column=0, sticky="e")
         self.rc2.grid(row=0, column=1, sticky="w")
 
+        #self.rc1.bind("<B1-Motion>", lambda event : self.mydraw_Action(event))
+
 
         # Create user canvas
         me.grid(row=0, column=0, sticky="e")
 
     #------------------------------------------ NEW CODE FROM HERE  -----------------------------------------------
-        me.bind("<B1-Motion>", self.draw_Action) #we can specify diffenrent events here
-       # self.rc1.bind("<B1-Motion>", self.draw_Action2)
+        #me.bind("<B1-Motion>", self.draw_Action) #we can specify diffenrent events here
+        me.bind("<Button-1>", self.draw_Action)
+       
+
+
+    def mydraw_Action(self, event):
+            cl = Client.Client()
+
+
+            if cl.cordy1 is not None and cl.cordy2 is not None:
+
+                    self.draw_figure_selected(event)
+
+
+            cl.cordy1 = event.x
+            cl.cordy2= event.y
+
 
 
 
@@ -127,6 +147,7 @@ class UI:
 
             #if self.cd.getFigure() == 'triangle':
             obj.widget.create_line(self.x_pos, self.y_pos, obj.x, obj.y, fill="blue", width=4, smooth=TRUE)
+
 
             #else :
 

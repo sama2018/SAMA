@@ -1,5 +1,7 @@
-
-TRE: 2
-RE: 3
-DFGB: 3
-FDGGD: 1
+TRUE: 2
+TRU: 2
+LILI: 3
+FFEF: 1
+345: 1
+DHDHD: 1
+GHNGH: 2

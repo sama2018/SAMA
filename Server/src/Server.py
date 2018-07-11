@@ -48,7 +48,7 @@ def clientT(conn):
             clients[user] = conn
             conn.send(user.encode())
 
-        elif jdata["action"] == "chat_message":
+        if jdata["action"] == "chat_message":
             username = (jdata["payload"]["from"]).upper()
             message = jdata["payload"]["message"]
             print(username)
@@ -61,7 +61,7 @@ def clientT(conn):
 
         # code starts here to send the drawings
 
-        elif jdata["action"] == "drawing":
+        if jdata["action"] == "drawing":
             coordinate1 = jdata["payload"]["coordinate1"]
             coordinate2 = jdata["payload"]["coordinate2"]
             coor1 = str(coordinate1)

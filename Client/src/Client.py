@@ -19,6 +19,9 @@ class Client:
      in charge of drawing the ui components. It also connects
      to the server automatically.
         """
+
+    cordy1, cordy2 = None, None
+
     def __init__(self):
 
         self.clientSocket = None
@@ -83,21 +86,27 @@ class Client:
                 cordy1 = jdata["payload"]["coordinate1"]
                 cordy2 = jdata["payload"]["coordinate2"]
 
+                self.ui.rc1.create_line(0, 0, cordy1,cordy2, fill="red", width=4, smooth=TRUE)
+                self.ui.rc2.create_line(0, 0, cordy1, cordy2, fill="green", width=4, smooth=TRUE)
+
+                #self.ui.rc1.bind("<B1-Motion>", lambda event : self.receiveFig(cordy1, cordy2,event))
 
 
 
-                # This insert method ia not working with the drawing, FIXME !!!
-                self.ui.rc1.bind("<B1-Motion>", self.draw_figure_selected(event, cordy1, cordy2))
 
-                #self.ui.rc1.create_line(cordy1, cordy2,  fill="blue", width=4, smooth=TRUE)
-                #self.draw_figure_selected(  cordy1, cordy2)
+    def receiveFig (self, posX, posY, event = None):
+
+        self.draw_received_figure(posX, posY , event )
 
     #FIXME !!!!
-    def draw_figure_selected(self, obj,  posX, posY):
+    def draw_received_figure(self, posX, posY,  obj):
 
-            #if self.cd.getFigure() == 'triangle':
-            obj.widget.create_line(posX, posY,  fill="blue", width=4, smooth=TRUE)
-            #else :
+        if posX is not None and posY is not None:
+
+            obj.widget.create_line(posX , posY, obj.x, obj.y, fill="red", width=4, smooth=TRUE)
+
+        posX = obj.x
+        posY = obj.y
 
 
 
