@@ -74,6 +74,7 @@ class ConnectionDialog:
             wordSelected = wordSelected + "\n"
 
 
+
             self.clientSocket.sendall(self.build_json_reply("set_username", {"username": user, "figure":wordSelected}).encode("utf-8"))
             modifiedSentence = self.clientSocket.recv(1024).decode("utf-8")
 

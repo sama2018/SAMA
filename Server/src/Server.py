@@ -32,7 +32,8 @@ def build_json_reply(action, payload):
 
 def clientT(conn):
 
-    """ This method handles the new client by identifying which action to take based on the
+    """
+        This method handles the new client by identifying which action to take based on the
         data sent by the client.
     """
 
@@ -87,12 +88,19 @@ def clientT(conn):
             coor1 = str(coordinate1)
             coor2 = str(coordinate2)
 
-            print("receive coords: " + "x: " + coor1 + " y:  " + coor2 )
+
+            if user in clients and user in channel:
+                print("channel {0}".format(channel[user]))
+
+                for user in clients:
+                    print("user: {0} pusername: {1}".format(user, jdata["payload"]["username"]))
+                    if str(user).lower() != jdata["payload"]["username"]:
+                        print("sending to clients\n")
+                        clients[user].sendall( build_json_reply("broadcast_event1", {"figure":str(channel[user]).strip("\n"), "user":str(user).lower(), "coordinate1": coordinate1, "coordinate2": coordinate2 }).encode("utf-8"))
+                        #print("receive coords")
 
 
-            for user in clients:
-                clients[user].sendall( build_json_reply("broadcast_event1", {"coordinate1": coordinate1, "coordinate2": coordinate2 }).encode("utf-8"))
-                #print("receive coords")
+
 
     conn.close()
 

@@ -28,6 +28,9 @@ class Client:
         #object of the UI
         self.ui = UI.UI(self)
 
+        # keep a dictionary with user => canvas
+        self.canvasdb = {}
+
         self.ui.drawLobby()
         self.ui.drawCanvas()
         self.ui.drawChat()
@@ -111,8 +114,8 @@ class Client:
     def send_drawing_coordinates(self, x, y, username, figure):
 
         self.clientSocket.sendall(self.build_json_reply("drawing", {"username":username, "figure":figure,"coordinate1": x, "coordinate2": y}).encode("utf-8"))
-        data = self.clientSocket.recv(2048).decode("utf-8")
-        print(data)
+        #data = self.clientSocket.recv(2048).decode("utf-8")
+        #print(data)
 
 
 

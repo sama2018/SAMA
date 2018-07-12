@@ -83,9 +83,7 @@ class UI:
         self.canvasLocal.grid(row=0, column=1, sticky="ews")
 
         # Create canvas for user1,2 and 3
-        #rc1 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
-        #rc2 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
-        me = Canvas(self.canvasLocal, width=380, height=320, bd=1, relief=SUNKEN)
+        self.me = Canvas(self.canvasLocal, width=380, height=320, bd=1, relief=SUNKEN)
 
         self.rc1.grid(row=0, column=0, sticky="e")
         self.rc2.grid(row=0, column=1, sticky="w")
@@ -94,11 +92,11 @@ class UI:
 
 
         # Create user canvas
-        me.grid(row=0, column=0, sticky="e")
+        self.me.grid(row=0, column=0, sticky="e")
 
     #------------------------------------------ NEW CODE FROM HERE  -----------------------------------------------
         #me.bind("<B1-Motion>", self.draw_Action) #we can specify diffenrent events here
-        me.bind("<Button-1>", self.draw_Action)
+        self.me.bind("<Button-1>", self.draw_Action)
        
 
 
@@ -133,7 +131,7 @@ class UI:
                 self.x_pos = event.x
                 self.y_pos = event.y
 
-                self.client.send_drawing_coordinates(self.x_pos, self.y_pos, self.cDialog.getUsername(), )
+                self.client.send_drawing_coordinates(self.x_pos, self.y_pos, self.cDialog.getUsername(), self.cDialog.getFigure() )
 
 
 
