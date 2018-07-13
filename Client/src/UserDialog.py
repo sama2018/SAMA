@@ -4,16 +4,20 @@ from tkinter import Toplevel, Label, Entry, StringVar, OptionMenu, Button
 
 class UserDialog(Toplevel):
 
-    def __init__(self, client):
+    def __init__(self):
 
         # Call constructor
         super(UserDialog, self).__init__()
 
         self.title = "User Information"
 
-        self.client = client
+        self.on_ok = None
 
-    def create_dialog(self):
+
+    def create_dialog(self, on_ok_callback):
+
+        # Set on ok callback event
+        self.on_ok = on_ok_callback
 
         # Username label and entry
         self.username_label = Label(self, text="Username")
@@ -58,7 +62,7 @@ class UserDialog(Toplevel):
         values = json.loads('{"username":"'+self.username_entry.get()+'", "figure":"'+self.figure_chosen.get()+'"}')
 
         # Return json reply
-        ret = self.client.register_user(values)
+        ret = self.on_ok(values)
 
         if ret["outcome"] == False:
             self.error_label.config(text=ret["payload"]["message"])

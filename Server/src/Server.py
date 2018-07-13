@@ -131,7 +131,11 @@ class Server:
         return True
 
     def a_broadcast_drawing(self, data):
-        print(data)
+
+        # Iterate over player list
+        for player in data["players"]:
+            if player != data["from"] and player in self.user_db:
+                self.user_db[player].sendall(self.build_json_reply("broadcast_drawing", True, {"from":data["from"], "to":player, "x":data["x"], "y":data["y"], "x_root":data["x_root"], "y_root":data["y_root"]}).encode("utf-8"))
 
 
 

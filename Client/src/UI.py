@@ -1,9 +1,8 @@
 from tkinter import *
 from Client.src import UserDialog
-from Client.src import Client
 
 
-class UI(Client.Client):
+class UI:
 
     wWidth = 1024
     wHeight = 720
@@ -16,14 +15,18 @@ class UI(Client.Client):
 
     def __init__(self):
 
-        # Call parent class constructor
-        super(UI, self).__init__()
 
         # Resolve root element
         self.root = Tk()
 
         # Canvas db
-        self.canvas_db = {}
+        self.canvas_db = []
+
+        # Canvas user
+        self.canvas_user = {}
+
+        # Previous canvas event
+        self.pcanvas_event = None
 
         # Set window geometry
         self.root.geometry(str(UI.wWidth) +"x"+ str(UI.wHeight))
@@ -47,9 +50,6 @@ class UI(Client.Client):
         self.chat = Frame(self.root, width=UI.lWidth, height=UI.crfHeight, bd=1, relief=SUNKEN)
         self.chatWindow = Text(self.chat)
 
-        self.connect()
-
-
 
 
     def drawLobby(self):
@@ -65,21 +65,26 @@ class UI(Client.Client):
         self.canvasLocal.grid(row=0, column=1, sticky="ews")
 
         # Create canvas for user1,2 and 3
-        rc1 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
-        rc2 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
-        rc3 = Canvas(self.canvasLocal, width=200, height=200, bd=1, relief=SUNKEN)
+        self.rc1 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
+        self.rc2 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
+        self.rc3 = Canvas(self.canvasLocal, width=200, height=200, bd=1, relief=SUNKEN)
 
         # Position canvases
-        rc1.grid(row=0, column=0, sticky="e")
-        rc2.grid(row=0, column=1, sticky="w")
-        rc3.grid(row=0, column=0, sticky="w")
+        self.rc1.grid(row=0, column=0, sticky="e")
+        self.rc2.grid(row=0, column=1, sticky="w")
+        self.rc3.grid(row=0, column=0, sticky="w")
 
         # Put remote canvases in canvas db
-        self.canvas_db[rc1] = None
-        self.canvas_db[rc2] = None
+        self.canvas_user[self.rc1] = None
+        self.canvas_user[self.rc2] = None
+
+        self.canvas_db.append(self.rc1)
+        self.canvas_db.append(self.rc2)
+
 
         # Attach motion event to local canvas
-        rc3.bind("<B1-Motion>", self.event_begin_drawing)
+        self.rc3.bind("<Button-1>", self.event_start_drawing)
+        self.rc3.bind("<B1-Motion>", self.event_begin_drawing)
 
 
 
@@ -103,40 +108,38 @@ class UI(Client.Client):
         self.chatInput.grid(row=0, column=0, sticky="sew")
 
 
-    def user_dialog(self):
-
-        # Create user dialog
-        self.userDialog = UserDialog.UserDialog(self)
-
-        # Start dialog
-        self.userDialog.create_dialog()
 
 
 
     def exitOption(self):
             exit()
 
-    def attachMainMenu(self):
+    def attachMainMenu(self, start_callback):
 
         self.mainMenu = Menu(self.root)
         self.mainSubMenu = Menu(self.mainMenu)
         self.root.config(menu=self.mainMenu)
-        self.mainSubMenu.add_command(label="Start", command=lambda : self.user_dialog())
+
+        self.mainSubMenu.add_command(label="Start", command=start_callback)
         self.mainSubMenu.add_command(label="Exit", command=self.exitOption)
         self.mainMenu.add_cascade(label="Network", menu=self.mainSubMenu)
 
-    def begin(self):
-        self.attachMainMenu()
+
+    def ui_init(self):
         self.drawCanvas()
         self.drawLobby()
         self.drawChat()
         self.root.mainloop()
 
+    def event_start_drawing(self, event):
+        self.pcanvas_event = event
+
     def event_begin_drawing(self, event):
         if self.player_db is None:
             print("cant paint no users are connected\n")
         else:
-            self.broadcast_drawing(event.x, event.y)
+            self.rc3.create_line(self.pcanvas_event.x, self.pcanvas_event.y,  self.rc3.canvasx(event.x), self.rc3.canvasy(event.y))
+            self.broadcast_drawing(self.pcanvas_event.x, self.pcanvas_event.y, event.x, event.y)
 
 
 
