@@ -1,27 +1,24 @@
-from Client.src import UI
 import socket
 from threading import Thread
 import json
 import sys
+from Client.src import UI
 
-class Client(UI):
+class Client:
 
-    SERVER_NAME = "localhost"
+    SERVER_HOST = 'localhost'
 
-    SERVER_PORT = 10000
+    SERVER_PORT = 10001
+
+    RBUF = 2049
 
     def __init__(self):
 
-        # Call parent class constructor
-        super(Client, self).__init__()
+        self.csocket = None
 
-        self.socket = None
+        self.player_db = None
 
-        # Connect to server
-        self.connect()
-
-        # Draw UI elements
-
+        self.local_user = None
 
 
     @staticmethod
@@ -32,8 +29,8 @@ class Client(UI):
 
         try:
             # Create socket and connect
-            self.socket = socket.socket(socket.SOCK_STREAM, socket.SOCK_STREAM)
-            self.clientSocket.connect((Client.SERVER_NAME, Client.SERVER_PORT))
+            self.csocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.csocket.connect((Client.SERVER_HOST, Client.SERVER_PORT))
 
             # Create and start new thread to handle server input
             t = Thread(target=self.handle_server_input)
@@ -42,8 +39,50 @@ class Client(UI):
         except socket.error as Error:
             sys.stderr.write("ERROR(1): Unable to connect server - {0}\n".format(Error.strerror))
 
+    def register_user(self, values):
+
+        if self.csocket is not None:
+
+            # Ask the server to register user
+            self.csocket.sendall(self.build_json_reply("register_user", values).encode("utf-8"))
+
+            # Receive server reply
+            data = json.loads(self.csocket.recv(Client.RBUF).decode("utf-8"))
+
+            # If reply was a success then save the list of users for the figure
+            if data["outcome"] == True:
+                # Set local user
+                self.local_user = values
+
+                # Update player db
+                self.player_db = data["payload"]["players"]
+
+            # Receive server reply
+            return data
+
     def handle_server_input(self):
-        pass
+
+        # Begin main loop
+        while True:
+
+            # Receive data from server
+            data = json.loads(self.csocket.recv(Client.RBUF).decode("utf-8"))
+
+            # Determine what to do
+            if data["action"] == "register_user":
+                if data["outcome"] == True:
+                    self.player_db = data["payload"]["players"]
+            elif data["action"] == "broadcast_drawing":
+                pass
+
+
+    def broadcast_drawing(self, x, y):
+        self.csocket.sendall(self.build_json_reply("broadcast_drawing", {"from":self.local_user["username"], "x":x,"y":y, "players":self.player_db}).encode("utf-8"))
+
+
+
+
+
 
 
 

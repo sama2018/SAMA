@@ -1,64 +1,140 @@
-from socket import *
+import socket
+import threading
 import json
-from _thread import *
 import sys
 
-#This function takes the data enters by the user and handles it to write into a file
-def createDict(sentence) :
-    f  =  open('users.txt', 'a')
+class Server:
 
-    f.write(sentence )
+    HOST = "localhost"
+    PORT = 10001
+    RBUF = 2049
 
-    user = sentence.split(" ")[0]
-    word = sentence.split(" ")[1]
-    message= "Added:\nuser: " + user + "\n" + "word: " + word
+    def __init__(self):
 
-    return message
+        # Server socket
+        self.server_socket = None
 
-serverPort = 10000
-serverSocket = socket(AF_INET, SOCK_STREAM)
-serverSocket.bind(("localhost", serverPort))
-serverSocket.listen(10)
+        # Server backlog
+        self.backlog = 10
 
-clients = {}
-print('The server is ready to receive')
+        # Keep a dictionary with user => socket
+        self.user_db = {}
+
+        # Keep a dictionary with user => figure
+        self.figure_db = {}
+
+    @staticmethod
+    def build_json_reply(action, outcome, payload):
+        return json.dumps({"action":action, "outcome":outcome, "payload":payload})
+
+    def start(self):
+
+        # Resolve TCP socket
+        try:
+            self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        except socket.error as Error:
+            sys.stderr.write("ERROR: unable to resolve tcp socket - {0}\n".format(Error.strerror))
+            exit(-1)
+
+        # Set socket as re-usable
+        self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+        # Bind socket
+        try:
+            self.server_socket.bind((Server.HOST, Server.PORT))
+        except socket.error as Error:
+            sys.stderr.write("ERROR: unable to bind socket - {0}\n".format(Error.strerror))
+            exit(-1)
+
+        # Start to listen
+        self.server_socket.listen(self.backlog)
+
+        # Enter main accept loop
+        while True:
+            sys.stdout.write("> waiting for connection\n")
+
+            client_socket, client_addr = self.server_socket.accept()
+
+            sys.stdout.write("> incoming connection from {0}:{1}\n".format(client_addr[0], client_addr[1]))
+
+            # Create new thread to handle connection
+            new_client_thread = threading.Thread(target=self.new_client, args=(client_socket, client_addr,))
+            new_client_thread.start()
+
+    def new_client(self, csocket, caddr):
+
+        # Enter infinite recv loop
+        while True:
+
+            rdata = json.loads(csocket.recv(Server.RBUF).decode("utf-8"))
+
+            if rdata["action"] == "register_user":
+                self.a_register_user(rdata["payload"], csocket)
+            elif rdata["action"] == "broadcast_drawing":
+                self.a_broadcast_drawing(rdata["payload"])
+
+    def count_user_figure(self, user, figure):
+
+        count = 0
+        print(self.figure_db)
+
+        for _user in self.figure_db:
+            if self.figure_db[_user] == figure:
+                count += 1
+
+        return count
+
+    def get_users_for_figure(self, figure):
+
+        # Holds figures
+        users = []
+
+        # Iterate over figure
+        for user in self.figure_db:
+            if self.figure_db[user] == figure and user in self.user_db:
+                users.append(user)
+
+        return users
+
+    def update_connected_players_for_figure(self, figure):
+
+        # Iterate over figure db
+        for _user in self.figure_db:
+            if self.figure_db[_user] == figure:
+
+                # Send that user the list of user for figure
+                self.user_db[_user].sendall(self.build_json_reply("register_user", True, {"players":self.get_users_for_figure(figure)}).encode("utf-8"))
 
 
-def clientT(conn):
+    def a_register_user(self, data, csocket):
 
-    while True:
+        # Get data values
+        username = data["username"]
+        figure = data["figure"]
 
-        data = conn.recv(1024).decode()
-        if not data:
-            break;
+        # Count how many users for a figure
+        if self.count_user_figure(username, figure) >= 3:
+            csocket.sendall(self.build_json_reply("register_user", False, {"message":"The figure chosen has reached it's limits"}).encode("utf-8"))
+            return False
 
-        # Turn data into json object
-        jdata = json.loads(data)
-        if jdata["action"] == "set_username":
+        # Add user to list
+        self.user_db[username] = csocket
+        self.figure_db[username] = figure
 
-            capitalizedSentence = jdata["payload"]["username"].upper()
-            clients[capitalizedSentence] = conn
-            conn.send(capitalizedSentence.encode())
+        # Get all users for that figure and send them to the client
+        csocket.sendall(self.build_json_reply("register_user", True, {"players":self.get_users_for_figure(figure)}).encode("utf-8"))
 
-        elif jdata["action"] == "chat_message":
-
-
-
-
-            # Do chat stuff here
-            pass
+        # Update connected players for users
+        self.update_connected_players_for_figure(figure)
 
 
+        return True
+
+    def a_broadcast_drawing(self, data):
+        print(data)
 
 
-    conn.close()
 
 
-while 1:
-    connectionSocket, addr = serverSocket.accept()
-    print("Connected with " + addr[0] + ":" + str(addr[1]))
-    start_new_thread(clientT, (connectionSocket,))
 
-
-serverSocket.close()
 

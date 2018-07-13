@@ -1,8 +1,11 @@
-from Client.src import Client
+from Client.src import UI
 
 def main():
+
     # Create
-    client = Client.Client()
+    ui = UI.UI()
+
+    ui.begin()
 
 
 if __name__ == "__main__":

@@ -1,8 +1,9 @@
 from tkinter import *
-from Client.src import ConnectionDialog
+from Client.src import UserDialog
+from Client.src import Client
 
 
-class UI:
+class UI(Client.Client):
 
     wWidth = 1024
     wHeight = 720
@@ -15,12 +16,14 @@ class UI:
 
     def __init__(self):
 
-        self.clientSocket = None
-
-        self.client = None
+        # Call parent class constructor
+        super(UI, self).__init__()
 
         # Resolve root element
         self.root = Tk()
+
+        # Canvas db
+        self.canvas_db = {}
 
         # Set window geometry
         self.root.geometry(str(UI.wWidth) +"x"+ str(UI.wHeight))
@@ -44,10 +47,10 @@ class UI:
         self.chat = Frame(self.root, width=UI.lWidth, height=UI.crfHeight, bd=1, relief=SUNKEN)
         self.chatWindow = Text(self.chat)
 
+        self.connect()
 
 
-    def setClientSocket(self, clientSocket):
-        self.clientSocket = clientSocket
+
 
     def drawLobby(self):
 
@@ -64,9 +67,24 @@ class UI:
         # Create canvas for user1,2 and 3
         rc1 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
         rc2 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
+        rc3 = Canvas(self.canvasLocal, width=200, height=200, bd=1, relief=SUNKEN)
 
+        # Position canvases
         rc1.grid(row=0, column=0, sticky="e")
         rc2.grid(row=0, column=1, sticky="w")
+        rc3.grid(row=0, column=0, sticky="w")
+
+        # Put remote canvases in canvas db
+        self.canvas_db[rc1] = None
+        self.canvas_db[rc2] = None
+
+        # Attach motion event to local canvas
+        rc3.bind("<B1-Motion>", self.event_begin_drawing)
+
+
+
+
+
 
 
     def drawChat(self):
@@ -80,15 +98,19 @@ class UI:
         self.chatWindow.grid_rowconfigure(0, weight=1)
 
         self.chatInput=Entry(self.chat, width=20)
-        chatButton = Button(self.chat, text="Send", command =self.mayClick)
-        chatButton.grid(row=0, column=1, sticky="sew")
+        #chatButton = Button(self.chat, text="Send", command =self.mayClick)
+        #chatButton.grid(row=0, column=1, sticky="sew")
         self.chatInput.grid(row=0, column=0, sticky="sew")
 
 
-    def callback(self):
-        #self.label(text="Please provide us a username")
-        ChatDialog = ConnectionDialog.ConnectionDialog(self.root)
-        ChatDialog.body()
+    def user_dialog(self):
+
+        # Create user dialog
+        self.userDialog = UserDialog.UserDialog(self)
+
+        # Start dialog
+        self.userDialog.create_dialog()
+
 
 
     def exitOption(self):
@@ -99,15 +121,22 @@ class UI:
         self.mainMenu = Menu(self.root)
         self.mainSubMenu = Menu(self.mainMenu)
         self.root.config(menu=self.mainMenu)
-        self.mainSubMenu.add_command(label="Start", command=self.callback)
+        self.mainSubMenu.add_command(label="Start", command=lambda : self.user_dialog())
         self.mainSubMenu.add_command(label="Exit", command=self.exitOption)
         self.mainMenu.add_cascade(label="Network", menu=self.mainSubMenu)
 
-    def uiInit(self):
+    def begin(self):
         self.attachMainMenu()
         self.drawCanvas()
         self.drawLobby()
         self.drawChat()
+        self.root.mainloop()
+
+    def event_begin_drawing(self, event):
+        if self.player_db is None:
+            print("cant paint no users are connected\n")
+        else:
+            self.broadcast_drawing(event.x, event.y)
 
 
 
