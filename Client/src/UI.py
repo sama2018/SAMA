@@ -1,3 +1,4 @@
+from time import sleep
 from tkinter import *
 from Client.src import UserDialog
 
@@ -84,7 +85,8 @@ class UI:
 
         # Attach motion event to local canvas
         self.rc3.bind("<Button-1>", self.event_start_drawing)
-        self.rc3.bind("<B1-Motion>", self.event_begin_drawing)
+        self.rc3.bind("<ButtonRelease-1>", self.event_begin_drawing)
+        #self.rc3.bind("<B1-Motion>", self.event_begin_drawing)
 
 
 
@@ -139,6 +141,7 @@ class UI:
             print("cant paint no users are connected\n")
         else:
             self.rc3.create_line(self.pcanvas_event.x, self.pcanvas_event.y,  self.rc3.canvasx(event.x), self.rc3.canvasy(event.y))
+            sleep(0.5)
             self.broadcast_drawing(self.pcanvas_event.x, self.pcanvas_event.y, event.x, event.y)
 
 

@@ -88,6 +88,7 @@ class Client(UI.UI):
             self.mutex.acquire()
             try:
                 raw = self.csocket.recv(Client.RBUF).decode("utf-8")
+                print(raw)
                 if raw:
                     data = json.loads(raw)
                 else:
@@ -122,7 +123,6 @@ class Client(UI.UI):
                     if self.canvas_user[canvas] == frm:
                         canvas.create_line(canvas.canvasx(x_root), canvas.canvasy(y_root), canvas.canvasx(x), canvas.canvasy(y), fill="blue")
 
-            sleep(0.5)
 
 
     def broadcast_drawing(self, x, y, x_root, y_root):
