@@ -124,7 +124,7 @@ class UI:
             print("cant paint no users are connected\n")
         else:
             self.rc3.create_line(self.pcanvas_event.x, self.pcanvas_event.y,  self.rc3.canvasx(event.x), self.rc3.canvasy(event.y))
-            sleep(0.5)
+            sleep(0.3)
             self.broadcast_drawing(self.pcanvas_event.x, self.pcanvas_event.y, event.x, event.y)
 
 

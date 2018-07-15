@@ -80,6 +80,8 @@ class Server:
                 self.a_broadcast_drawing(rdata["payload"])
             elif rdata["action"] == "chat_broadcast":
                 self.a_chat_broadcast(rdata["payload"])
+            elif rdata["action"] == "disconnect":
+                self.a_disconnect(rdata["payload"])
 
     def count_user_figure(self, user, figure):
 
@@ -111,6 +113,9 @@ class Server:
 
                 # Send that user the list of user for figure
                 self.user_db[_user].sendall(self.build_json_reply("register_user", True, {"players":self.get_users_for_figure(figure)}).encode("utf-8"))
+
+    def remove_player_from_server(self, player):
+        pass
 
     def a_register_user(self, data, csocket):
 
@@ -147,6 +152,9 @@ class Server:
         # Iterate over all users and send the message
         for user in self.user_db:
             self.user_db[user].sendall(self.build_json_reply("chat_broadcast", True, {"from":data["from"], "message":data["message"]}).encode("utf-8"))
+
+    def a_disconnect(self, data):
+        pass
 
 
 

@@ -103,7 +103,10 @@ class Client(UI.UI):
                     for player in self.player_db:
                         if player != self.local_user["username"]:
                             self.canvas_user[self.canvas_db[pcount]] = player
-                        pcount += 1
+                            pcount += 1
+                            print(pcount)
+
+
 
                     print(self.canvas_user)
 
@@ -148,7 +151,9 @@ class Client(UI.UI):
 
     def on_window_close(self):
 
+        # Send disconnect event
         if self.csocket:
+            self.csocket.sendall(self.build_json_reply("disconnect", {"from":self.local_user["username"]}).encode("utf-8"))
             self.csocket.close()
 
         self.root.destroy()
