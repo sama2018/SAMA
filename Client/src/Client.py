@@ -72,10 +72,6 @@ class Client(UI.UI):
                             self.canvas_user[self.canvas_db[pcount]] = player
                     pcount += 1
 
-
-                print(self.canvas_user)
-
-
             # Receive server reply
             return data
 
@@ -84,11 +80,13 @@ class Client(UI.UI):
         # Begin main loop
         while True:
 
+            if not self.csocket:
+                return False
+
             # Receive data from server
             self.mutex.acquire()
             try:
                 raw = self.csocket.recv(Client.RBUF).decode("utf-8")
-                print(raw)
                 if raw:
                     data = json.loads(raw)
                 else:
@@ -117,13 +115,25 @@ class Client(UI.UI):
                 y = data["payload"]["y"]
                 y_root = data["payload"]["y_root"]
 
-
                 # Look for frm in canvas_user
                 for canvas in self.canvas_user:
                     if self.canvas_user[canvas] == frm:
                         canvas.create_line(canvas.canvasx(x_root), canvas.canvasy(y_root), canvas.canvasx(x), canvas.canvasy(y), fill="blue")
+            elif data["action"] == "chat_broadcast" and data["outcome"] == True:
+                frm = data["payload"]["from"]
+                message = data["payload"]["message"]
 
+                # Insert new message into chat window
+                self.chatWindow.insert("end", frm+"> "+message+"\n")
 
+    def broadcast_chat_message(self, message):
+        if self.csocket is None or self.local_user is None:
+            self.chatWindow.insert("end", "ERROR: Please set a username and a figure\n")
+            return False
+        else:
+            self.csocket.sendall(self.build_json_reply("chat_broadcast", {"from":self.local_user["username"], "message":message}).encode("utf-8"))
+            self.chatInput.delete(0, 'end')
+            return True
 
     def broadcast_drawing(self, x, y, x_root, y_root):
         self.csocket.sendall(self.build_json_reply("broadcast_drawing", {"from":self.local_user["username"], "x":x,"y":y, "x_root":x_root, "y_root":y_root, "players":self.player_db}).encode("utf-8"))
@@ -136,6 +146,13 @@ class Client(UI.UI):
         # Start dialog
         self.userDialog.create_dialog(self.register_user)
 
+    def on_window_close(self):
+
+        if self.csocket:
+            self.csocket.close()
+
+        self.root.destroy()
+
     def start(self):
 
         # Connect to server
@@ -145,7 +162,7 @@ class Client(UI.UI):
         self.attachMainMenu(lambda : self.user_dialog())
 
         # start ui
-        self.ui_init()
+        self.ui_init(lambda : self.broadcast_chat_message(self.chatInput.get()), lambda : self.on_window_close())
 
 
 

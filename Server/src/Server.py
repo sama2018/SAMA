@@ -66,17 +66,24 @@ class Server:
         # Enter infinite recv loop
         while True:
 
+            if not csocket:
+                return False
+
             rdata = json.loads(csocket.recv(Server.RBUF).decode("utf-8"))
+
+            if not rdata:
+                return False
 
             if rdata["action"] == "register_user":
                 self.a_register_user(rdata["payload"], csocket)
             elif rdata["action"] == "broadcast_drawing":
                 self.a_broadcast_drawing(rdata["payload"])
+            elif rdata["action"] == "chat_broadcast":
+                self.a_chat_broadcast(rdata["payload"])
 
     def count_user_figure(self, user, figure):
 
         count = 0
-        print(self.figure_db)
 
         for _user in self.figure_db:
             if self.figure_db[_user] == figure:
@@ -105,7 +112,6 @@ class Server:
                 # Send that user the list of user for figure
                 self.user_db[_user].sendall(self.build_json_reply("register_user", True, {"players":self.get_users_for_figure(figure)}).encode("utf-8"))
 
-
     def a_register_user(self, data, csocket):
 
         # Get data values
@@ -127,7 +133,6 @@ class Server:
         # Update connected players for users
         self.update_connected_players_for_figure(figure)
 
-
         return True
 
     def a_broadcast_drawing(self, data):
@@ -136,6 +141,12 @@ class Server:
         for player in data["players"]:
             if player != data["from"] and player in self.user_db:
                 self.user_db[player].sendall(self.build_json_reply("broadcast_drawing", True, {"from":data["from"], "to":player, "x":data["x"], "y":data["y"], "x_root":data["x_root"], "y_root":data["y_root"]}).encode("utf-8"))
+
+    def a_chat_broadcast(self, data):
+
+        # Iterate over all users and send the message
+        for user in self.user_db:
+            self.user_db[user].sendall(self.build_json_reply("chat_broadcast", True, {"from":data["from"], "message":data["message"]}).encode("utf-8"))
 
 
 

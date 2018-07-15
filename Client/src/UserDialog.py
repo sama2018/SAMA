@@ -13,7 +13,6 @@ class UserDialog(Toplevel):
 
         self.on_ok = None
 
-
     def create_dialog(self, on_ok_callback):
 
         # Set on ok callback event
@@ -32,7 +31,6 @@ class UserDialog(Toplevel):
         # Error label
         self.error_label = Label(self)
 
-
         # Action button
         self.action_button = Button(self, text="Go !", command=self.ok)
 
@@ -50,8 +48,6 @@ class UserDialog(Toplevel):
 
         # Position button
         self.action_button.grid(row=2, column=1, sticky="e")
-
-
 
     def ok(self):
 

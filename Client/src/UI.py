@@ -1,7 +1,5 @@
 from time import sleep
 from tkinter import *
-from Client.src import UserDialog
-
 
 class UI:
 
@@ -15,7 +13,6 @@ class UI:
     crfHeight = 420
 
     def __init__(self):
-
 
         # Resolve root element
         self.root = Tk()
@@ -51,8 +48,6 @@ class UI:
         self.chat = Frame(self.root, width=UI.lWidth, height=UI.crfHeight, bd=1, relief=SUNKEN)
         self.chatWindow = Text(self.chat)
 
-
-
     def drawLobby(self):
 
         self.usernameLabel.grid(row=0, column=0, sticky="nsew")
@@ -82,19 +77,11 @@ class UI:
         self.canvas_db.append(self.rc1)
         self.canvas_db.append(self.rc2)
 
-
         # Attach motion event to local canvas
         self.rc3.bind("<Button-1>", self.event_start_drawing)
         self.rc3.bind("<ButtonRelease-1>", self.event_begin_drawing)
-        #self.rc3.bind("<B1-Motion>", self.event_begin_drawing)
 
-
-
-
-
-
-
-    def drawChat(self):
+    def drawChat(self, on_chat_send_callback):
 
         self.chat.grid(row=0, column=2, sticky="nsew")
         self.chat.grid_columnconfigure(0, weight=1)
@@ -105,13 +92,9 @@ class UI:
         self.chatWindow.grid_rowconfigure(0, weight=1)
 
         self.chatInput=Entry(self.chat, width=20)
-        #chatButton = Button(self.chat, text="Send", command =self.mayClick)
-        #chatButton.grid(row=0, column=1, sticky="sew")
+        chatButton = Button(self.chat, text="Send", command=on_chat_send_callback)
+        chatButton.grid(row=0, column=1, sticky="sew")
         self.chatInput.grid(row=0, column=0, sticky="sew")
-
-
-
-
 
     def exitOption(self):
             exit()
@@ -126,11 +109,11 @@ class UI:
         self.mainSubMenu.add_command(label="Exit", command=self.exitOption)
         self.mainMenu.add_cascade(label="Network", menu=self.mainSubMenu)
 
-
-    def ui_init(self):
+    def ui_init(self, on_chat_send_callback, on_close_callback):
         self.drawCanvas()
         self.drawLobby()
-        self.drawChat()
+        self.drawChat(on_chat_send_callback)
+        self.root.protocol("WM_DELETE_WINDOW", on_close_callback)
         self.root.mainloop()
 
     def event_start_drawing(self, event):
