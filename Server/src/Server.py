@@ -8,11 +8,18 @@ class Server:
     HOST = "localhost"
     PORT = 10001
     RBUF = 2049
+    UDP_HOST = "localhost"
+    UDP_PORT = 10002
+    VERSION = "1.0.0"
+    AUTHORS = ["Mayrelis Morejon", "Samira Tellez"]
 
     def __init__(self):
 
         # Server socket
         self.server_socket = None
+
+        # UDP server socket
+        self.udp_server_socket = None
 
         # Server backlog
         self.backlog = 10
@@ -51,15 +58,41 @@ class Server:
 
         # Enter main accept loop
         while True:
-            sys.stdout.write("> waiting for connection\n")
+            sys.stdout.write("TCP> waiting for connection\n")
 
             client_socket, client_addr = self.server_socket.accept()
 
-            sys.stdout.write("> incoming connection from {0}:{1}\n".format(client_addr[0], client_addr[1]))
+            sys.stdout.write("TCP>> incoming connection from {0}:{1}\n".format(client_addr[0], client_addr[1]))
 
             # Create new thread to handle connection
             new_client_thread = threading.Thread(target=self.new_client, args=(client_socket, client_addr,))
             new_client_thread.start()
+
+    def udp_start(self):
+
+        # Resolve UDP socket
+        try:
+            self.udp_server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        except socket.error as Error:
+            sys.stderr.write("ERROR: unable to resolve udp socket - {0}\n".format(Error.strerror))
+            return False
+
+        # Bind socket
+        try:
+            self.udp_server_socket.bind((Server.UDP_HOST, Server.UDP_PORT))
+        except socket.error as Error:
+            sys.stderr.write("ERROR: unable to bind udp socket - {0}\n".format(Error.strerror))
+            exit(-1)
+
+        # Enter main loop
+        while True:
+            print("UDP> waiting for connection\n")
+            data, client_addr = self.udp_server_socket.recvfrom(Server.RBUF)
+            sys.stdout.write("UDP>> incoming message from {0}:{1}\n".format(client_addr[0], client_addr[1]))
+
+            # Create new thread to handle udp data
+            new_udp_client_thread = threading.Thread(target=self.new_udp_client, args=(data.decode("utf-8"), client_addr,))
+            new_udp_client_thread.start()
 
     def new_client(self, csocket, caddr):
 
@@ -82,6 +115,20 @@ class Server:
                 self.a_chat_broadcast(rdata["payload"])
             elif rdata["action"] == "disconnect":
                 self.a_disconnect(rdata["payload"])
+            elif rdata["action"] == "get_users":
+                self.a_get_users(rdata["payload"], csocket)
+
+    def new_udp_client(self, data, caddr):
+
+        # Convert data into json
+        jdata = json.loads(data)
+
+        # Decide what to do
+        if jdata["action"] == "server_info":
+            self.a_udp_server_info(jdata["payload"], caddr)
+
+
+
 
     def count_user_figure(self, user, figure):
 
@@ -155,6 +202,25 @@ class Server:
 
     def a_disconnect(self, data):
         pass
+
+    def a_udp_server_info(self, data, addr):
+
+        # Holds list of users
+        user_list = []
+
+        # Iterate to get just the users
+        for user in self.user_db:
+            user_list.append(user)
+
+        self.udp_server_socket.sendto(self.build_json_reply("server_info", True, {
+            "users":user_list,
+            "user_figure": self.figure_db,
+            "version":Server.VERSION,
+            "authors":Server.AUTHORS
+        }).encode("utf-8"), addr)
+
+
+
 
 
 

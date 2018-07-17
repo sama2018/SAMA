@@ -46,7 +46,20 @@ class UI:
 
         # Create Chat
         self.chat = Frame(self.root, width=UI.lWidth, height=UI.crfHeight, bd=1, relief=SUNKEN)
-        self.chatWindow = Text(self.chat)
+        self.chatWindow = Text(self.chat, width=15)
+
+        # Create send image frame
+        #self.send_image_frame = Frame(self.root, width=200, height=40, bd=1, relief=SUNKEN)
+
+        # Create option menu that will contain all users which can be sent the drawing
+        #self.user_list_dd_value = StringVar(self.send_image_frame)
+        #self.user_list_dd_value.set("select user ...")
+        #self.user_list_dd_values = ['loading users ...']
+        #self.user_list_dropdown = OptionMenu(self.send_image_frame, self.user_list_dd_value, *self.user_list_dd_values)
+
+        # Create send image button
+        #self.sendImageButton = Button(self.send_image_frame, text="Send Image")
+
 
     def drawLobby(self):
 
@@ -61,14 +74,14 @@ class UI:
         self.canvasLocal.grid(row=0, column=1, sticky="ews")
 
         # Create canvas for user1,2 and 3
-        self.rc1 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
-        self.rc2 = Canvas(self.canvasRemote, width=213, height=320, bd=1, relief=SUNKEN)
-        self.rc3 = Canvas(self.canvasLocal, width=200, height=200, bd=1, relief=SUNKEN)
+        self.rc1 = Canvas(self.canvasRemote, width=300, height=320, bd=1, relief=SUNKEN)
+        self.rc2 = Canvas(self.canvasRemote, width=300, height=320, bd=1, relief=SUNKEN)
+        self.rc3 = Canvas(self.canvasLocal, width=200, height=280, bd=1, relief=SUNKEN)
 
         # Position canvases
-        self.rc1.grid(row=0, column=0, sticky="e")
-        self.rc2.grid(row=0, column=1, sticky="w")
-        self.rc3.grid(row=0, column=0, sticky="w")
+        self.rc1.pack(anchor=W, fill=Y, expand=False, side=LEFT)
+        self.rc2.pack(anchor=E, fill=Y, expand=False, side=RIGHT)
+        self.rc3.pack(anchor=CENTER, fill=BOTH, expand=True)
 
         # Put remote canvases in canvas db
         self.canvas_user[self.rc1] = None
@@ -80,6 +93,14 @@ class UI:
         # Attach motion event to local canvas
         self.rc3.bind("<Button-1>", self.event_start_drawing)
         self.rc3.bind("<ButtonRelease-1>", self.event_begin_drawing)
+
+        # Position send image frame
+        #self.send_image_frame.grid(row=1, column=1, sticky="ews")
+
+        # Position send image button and send image user list
+        #self.user_list_dropdown.pack(anchor=W, fill=Y, expand=False, side=LEFT)
+        #self.sendImageButton.pack(anchor=W, fill=Y, expand=False, side=LEFT)
+
 
     def drawChat(self, on_chat_send_callback):
 
@@ -99,13 +120,14 @@ class UI:
     def exitOption(self):
             exit()
 
-    def attachMainMenu(self, start_callback):
+    def attachMainMenu(self, start_callback, server_info_callback):
 
         self.mainMenu = Menu(self.root)
         self.mainSubMenu = Menu(self.mainMenu)
         self.root.config(menu=self.mainMenu)
 
         self.mainSubMenu.add_command(label="Start", command=start_callback)
+        self.mainSubMenu.add_command(label="Server Info", command=server_info_callback)
         self.mainSubMenu.add_command(label="Exit", command=self.exitOption)
         self.mainMenu.add_cascade(label="Network", menu=self.mainSubMenu)
 

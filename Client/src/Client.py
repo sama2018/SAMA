@@ -3,8 +3,9 @@ from threading import Thread, Lock
 import json
 import sys
 from time import sleep
+from tkinter import END
 
-from Client.src import UI, UserDialog
+from Client.src import UI, UserDialog, InfoDialog
 
 
 class Client(UI.UI):
@@ -12,6 +13,10 @@ class Client(UI.UI):
     SERVER_HOST = 'localhost'
 
     SERVER_PORT = 10001
+
+    UDP_SERVER_HOST = 'localhost'
+
+    UDP_SERVER_PORT = 10002
 
     RBUF = 2049
 
@@ -21,6 +26,8 @@ class Client(UI.UI):
         super(Client, self).__init__()
 
         self.csocket = None
+
+        self.ucsocket = None
 
         self.player_db = None
 
@@ -106,8 +113,6 @@ class Client(UI.UI):
                             pcount += 1
                             print(pcount)
 
-
-
                     print(self.canvas_user)
 
             elif data["action"] == "broadcast_drawing" and data["outcome"] == True:
@@ -141,6 +146,28 @@ class Client(UI.UI):
     def broadcast_drawing(self, x, y, x_root, y_root):
         self.csocket.sendall(self.build_json_reply("broadcast_drawing", {"from":self.local_user["username"], "x":x,"y":y, "x_root":x_root, "y_root":y_root, "players":self.player_db}).encode("utf-8"))
 
+    def get_info(self):
+
+        # Create tuple for sending data
+        to = (Client.UDP_SERVER_HOST, Client.UDP_SERVER_PORT)
+
+        # Create udp socket
+        self.ucsocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+        # Send packet
+        self.ucsocket.sendto(self.build_json_reply("server_info", {}).encode("utf-8"), to)
+
+        # Receive reply
+        data, addr = self.ucsocket.recvfrom(Client.RBUF)
+
+        # Encode reply into json
+        jdata = json.loads(data.decode("utf-8"))
+
+        if jdata["outcome"] == True:
+            return jdata["payload"]
+
+
+
     def user_dialog(self):
 
         # Create user dialog
@@ -149,11 +176,19 @@ class Client(UI.UI):
         # Start dialog
         self.userDialog.create_dialog(self.register_user)
 
+    def info_dialog(self):
+
+        # Create info dialog
+        self.infoDialog = InfoDialog.InfoDialog()
+
+        # Create dialog
+        self.infoDialog.create_dialog(self.get_info)
+
     def on_window_close(self):
 
         # Send disconnect event
         if self.csocket:
-            self.csocket.sendall(self.build_json_reply("disconnect", {"from":self.local_user["username"]}).encode("utf-8"))
+            #self.csocket.sendall(self.build_json_reply("disconnect", {"from":self.local_user["username"]}).encode("utf-8"))
             self.csocket.close()
 
         self.root.destroy()
@@ -164,7 +199,7 @@ class Client(UI.UI):
         self.connect()
 
         # Attach main menu
-        self.attachMainMenu(lambda : self.user_dialog())
+        self.attachMainMenu(lambda : self.user_dialog(), lambda : self.info_dialog())
 
         # start ui
         self.ui_init(lambda : self.broadcast_chat_message(self.chatInput.get()), lambda : self.on_window_close())
