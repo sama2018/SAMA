@@ -92,7 +92,7 @@ class UI:
 
         # Attach motion event to local canvas
         self.rc3.bind("<Button-1>", self.event_start_drawing)
-        self.rc3.bind("<ButtonRelease-1>", self.event_begin_drawing)
+        self.rc3.bind("<ButtonRelease-1>", self.event_stop_drawing)
 
         # Position send image frame
         #self.send_image_frame.grid(row=1, column=1, sticky="ews")
@@ -141,7 +141,7 @@ class UI:
     def event_start_drawing(self, event):
         self.pcanvas_event = event
 
-    def event_begin_drawing(self, event):
+    def event_stop_drawing(self, event):
         if self.player_db is None:
             print("cant paint no users are connected\n")
         else:

@@ -21,7 +21,7 @@ class Server:
         # UDP server socket
         self.udp_server_socket = None
 
-        # Server backlog
+        # Server backlog (TCP)
         self.backlog = 10
 
         # Keep a dictionary with user => socket
@@ -30,14 +30,17 @@ class Server:
         # Keep a dictionary with user => figure
         self.figure_db = {}
 
+
     @staticmethod
     def build_json_reply(action, outcome, payload):
+        """Serialize json object"""
         return json.dumps({"action":action, "outcome":outcome, "payload":payload})
 
     def start(self):
 
         # Resolve TCP socket
         try:
+            # Create socket
             self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         except socket.error as Error:
             sys.stderr.write("ERROR: unable to resolve tcp socket - {0}\n".format(Error.strerror))
@@ -60,6 +63,7 @@ class Server:
         while True:
             sys.stdout.write("TCP> waiting for connection\n")
 
+            # Accept client connection
             client_socket, client_addr = self.server_socket.accept()
 
             sys.stdout.write("TCP>> incoming connection from {0}:{1}\n".format(client_addr[0], client_addr[1]))
@@ -132,6 +136,8 @@ class Server:
 
     def count_user_figure(self, user, figure):
 
+        """ Count how many users a certain figure has."""
+
         count = 0
 
         for _user in self.figure_db:
@@ -141,6 +147,7 @@ class Server:
         return count
 
     def get_users_for_figure(self, figure):
+        """ Get all users for a specific figure"""
 
         # Holds figures
         users = []
@@ -153,6 +160,7 @@ class Server:
         return users
 
     def update_connected_players_for_figure(self, figure):
+        """ Update each player's list for the same figure"""
 
         # Iterate over figure db
         for _user in self.figure_db:

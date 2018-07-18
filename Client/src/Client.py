@@ -25,14 +25,19 @@ class Client(UI.UI):
         # Call parent class constructor
         super(Client, self).__init__()
 
+        # TCP Socket (connection to TCP server)
         self.csocket = None
 
+        # UDP Socket (connection to UDP Server)
         self.ucsocket = None
 
+        # Local list of users drawing the same figure
         self.player_db = None
 
+        # Contains the registered user (you)
         self.local_user = None
 
+        # Allows for access of data
         self.mutex = Lock()
 
 
@@ -41,6 +46,7 @@ class Client(UI.UI):
         return json.dumps({"action":action,"payload":payload})
 
     def connect(self):
+        """ Connect to TCP server"""
 
         try:
             # Create socket and connect
@@ -55,6 +61,7 @@ class Client(UI.UI):
             sys.stderr.write("ERROR(1): Unable to connect server - {0}\n".format(Error.strerror))
 
     def register_user(self, values):
+        """ Register user with server"""
 
         if self.csocket is not None:
 
@@ -106,14 +113,12 @@ class Client(UI.UI):
                 if data["outcome"] == True:
                     self.player_db = data["payload"]["players"]
 
+                    # Re-assign the canvases after we obtain the new list of players
                     pcount = 0
                     for player in self.player_db:
                         if player != self.local_user["username"]:
                             self.canvas_user[self.canvas_db[pcount]] = player
                             pcount += 1
-                            print(pcount)
-
-                    print(self.canvas_user)
 
             elif data["action"] == "broadcast_drawing" and data["outcome"] == True:
                 frm = data["payload"]["from"]
@@ -127,6 +132,7 @@ class Client(UI.UI):
                 for canvas in self.canvas_user:
                     if self.canvas_user[canvas] == frm:
                         canvas.create_line(canvas.canvasx(x_root), canvas.canvasy(y_root), canvas.canvasx(x), canvas.canvasy(y), fill="blue")
+
             elif data["action"] == "chat_broadcast" and data["outcome"] == True:
                 frm = data["payload"]["from"]
                 message = data["payload"]["message"]
@@ -163,10 +169,9 @@ class Client(UI.UI):
         # Encode reply into json
         jdata = json.loads(data.decode("utf-8"))
 
+        # Outcome
         if jdata["outcome"] == True:
             return jdata["payload"]
-
-
 
     def user_dialog(self):
 
