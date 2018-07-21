@@ -94,7 +94,7 @@ class Server:
             data, client_addr = self.udp_server_socket.recvfrom(Server.RBUF)
             sys.stdout.write("UDP>> incoming message from {0}:{1}\n".format(client_addr[0], client_addr[1]))
 
-            # Create new thread to handle udp data
+            # Create new thread to handle udp  data
             new_udp_client_thread = threading.Thread(target=self.new_udp_client, args=(data.decode("utf-8"), client_addr,))
             new_udp_client_thread.start()
 
@@ -211,6 +211,7 @@ class Server:
     def a_disconnect(self, data):
         pass
 
+    
     def a_udp_server_info(self, data, addr):
 
         # Holds list of users
